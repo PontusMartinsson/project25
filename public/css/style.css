@@ -1,0 +1,42 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: darkgray;
+}
+
+a {
+	color: whitesmoke;
+	display: block;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+header {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	
+	padding: 0.5rem;
+	height: fit-content;
+	width: calc(100% - 1rem);
+
+	background-color: rebeccapurple;
+	font-size: small;
+}
+
+#upper-right-corner {
+	display: flex;
+	justify-content: right;
+	width: 100%;
+}
+
+#login-button {
+	padding: 0.5rem;
+	background-color: green;
+}
