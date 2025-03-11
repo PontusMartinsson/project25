@@ -1,0 +1,8 @@
+form action="/part/search" method="post" 
+  input type="text" name="name" placeholder="Filter name"
+  input type="text" name="type" placeholder="Filter tag"
+  input type="submit" value="Apply filters"
+  
+-@result.each do |part|
+  h2 = part["name"]
+  h3 = part["type"]
