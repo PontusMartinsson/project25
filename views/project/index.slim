@@ -1,0 +1,11 @@
+form action="/project/search" method="post" 
+  input type="text" name="name" placeholder="Filter name"
+  input type="text" name="creator" placeholder="Filter creator"
+  input type="text" name="tag" placeholder="Filter tag"
+  input type="submit" value="Apply filters"
+
+h1 = @result
+-@result.each do |project|
+		a.projectthumbnail href="/project/show/#{project["projectid"]}"
+			h2 = project["projectname"]
+			h3 = project["tagname"]
