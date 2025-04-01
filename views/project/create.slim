@@ -18,9 +18,13 @@ form#project-creation action="/project" method="post"
         option value="#{part['id']}" #{part['name']}
 
   input type="text" name="name" placeholder="Name"
+  
+  .checkbox
+    label for="public" Public?
+    input type="checkbox" name="public"
 
-  label for="public" Public?
-  input type="checkbox" name="public"
+  input type="submit" value="Create project"
 
-  input type="submit" value="gör skiten eller"
+- unless flash[:message].nil?
+    p = flash[:message]
 

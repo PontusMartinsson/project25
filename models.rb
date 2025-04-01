@@ -109,6 +109,11 @@ def create_project(params)
     ", [params['name'], 1, public, params['part1'].to_i, params['part2'].to_i, params['part3'].to_i]) # § fixa user id
 end
 
+def project_names
+  db = connect_db_nohash
+  db.execute("SELECT projectname FROM project").flatten
+end
+
 def parts
   db = connect_db
   db.execute("SELECT * FROM part")

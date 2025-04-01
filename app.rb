@@ -43,9 +43,19 @@ get '/project/:projectid' do
   slim :'project/show'
 end
 
-post '/project' do
-  create_project(params)
-  redirect '/project/new'
+post '/project' do # flytta skit till models
+  name = params['name']
+
+  if project_names.include?(name)
+    flash[:message] = 'Name already taken'
+    redirect '/project/new'
+  elsif name.empty?
+    flash[:message] = 'Please fill in name'
+    redirect '/project/new'
+  else
+    create_project(params)
+    redirect '/project'
+  end
 end
 
 get '/part' do
@@ -63,7 +73,7 @@ get '/part/new' do
   slim :'part/create'
 end
 
-post '/part' do
+post '/part' do # flytta skit till models
   name = params[:name]
   type = params[:type]
 
