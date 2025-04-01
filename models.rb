@@ -25,63 +25,59 @@ def projects_user(id)
   db.execute("SELECT * FROM project WHERE userid = ? AND public = 1", id)
 end
 
-# def projects_search(name, creator, tag)
-#   db = connect_db
+def sql_add(sql, operator, phrase)
+  sql[-1] == '?' || sql[-1] == ')' ? sql << " #{operator} #{phrase}" : sql << " #{phrase}"
+end
 
-#   name = name.nil? || name.empty? ? '' : name.insert(0, '%') << '%'
-#   creator = creator.nil? || creator.empty? ? '' : creator.insert(0, '%') << '%'
-#   tag = tag.nil? || tag.empty? ? '' : tag.insert(0, '%') << '%'
-
-#   sql = "SELECT * FROM project"
-#   keywords = []
-
-#   unless name.empty? && creator.empty? && tag.empty?
-#     sql << " WHERE"
-#     sql, keywords = add_to_sql(sql, keywords, name, 'projectname')
-#     sql, keywords = add_to_sql(sql, keywords, creator, 'creator')
-#     sql, keywords = add_to_sql(sql, keywords, tag, 'tag')
-#   end
-
-#   db.execute(sql, keywords)
-# end
-
-# def add_to_sql(sql, keywords, var, column)
-#   unless var.empty?
-#     if sql[-1] == '?'
-#       sql << ' AND'
-#     end
-#     sql << " #{column} LIKE ?"
-#     keywords.append(var)
-#   end
-#   return sql, keywords
-# end
+def keyword_nil(keyword)
+  keyword.nil? || keyword.empty? ? '' : keyword.insert(0, '%') << '%'
+end
 
 def projects_search(name, creator, tag)
-  db = connect_db
+  db = connect_db_nohash
 
-  name = name.nil? || name.empty? ? '' : name.insert(0, '%') << '%'
-  creator = creator.nil? || creator.empty? ? '' : creator.insert(0, '%') << '%'
-  tag = tag.nil? || tag.empty? ? '' : tag.insert(0, '%') << '%'
+  name = keyword_nil(name)
+  creator = keyword_nil(creator)
+  tag = keyword_nil(tag)
 
   sql = "SELECT * FROM project"
   vars = []
 
   unless name.empty? && creator.empty? && tag.empty?
     sql << " WHERE"
-    unless name.empty?
-      sql << ' projectname LIKE ?'
+
+    unless tag.empty? # filter på tag
+      tagid = db.execute("SELECT id FROM tag WHERE tagname LIKE ?", tag).flatten
+      sql = "
+        SELECT *
+        FROM ((project_tag_rel
+          INNER JOIN project ON project_tag_rel.projectid = project.id)
+          INNER JOIN tag ON project_tag_rel.tagid = tag.id)
+        WHERE (
+        "
+      tagid.each do |i|
+        sql_add(sql, "OR", "tagid = ?")
+        vars.append i
+      end
+
+      sql << ")"
+    end
+
+    unless name.empty? # filter på projekttitel
+      sql_add(sql, "AND", "projectname LIKE ?")
       vars.append(name)
     end
-    unless creator.empty?
-      id = db.execute("SELECT id FROM user WHERE username LIKE ?", creator).first['id']
-      sql[-1] == '?' ? sql << ' AND userid = ?' : sql << ' userid = ?'
-      vars.append(id)
+
+    unless creator.empty? # filter på skapares namn
+      id = db.execute("SELECT id FROM user WHERE username LIKE ?", creator)
+      sql_add(sql, "AND", "userid = ?")
+      id.empty? ? vars.append(nil) : vars.append(id)
     end
-    # unless tag.empty # hitta projekt med tag LIKE tag
-    # end
+
   end
 
-  p sql, vars
+  puts sql, vars
+  db.results_as_hash = true
   db.execute(sql, vars)
 end
 
@@ -99,8 +95,8 @@ end
 def parts_search(name, type)
   db = connect_db
 
-  name = name.nil? || name.empty? ? '' : name.insert(0, '%') << '%'
-  type = type.nil? || type.empty? ? '' : type.insert(0, '%') << '%'
+  name = keyword_nil(name)
+  type = keyword_nil(type)
 
   if name.empty? && type.empty?
     db.execute("SELECT * FROM part")

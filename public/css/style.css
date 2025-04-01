@@ -30,6 +30,10 @@ header {
 	font-size: small;
 }
 
+header > a {
+	margin: 0 0.5rem;
+}
+
 #upper-right-corner {
 	display: flex;
 	justify-content: right;

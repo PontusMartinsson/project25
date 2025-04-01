@@ -5,7 +5,8 @@ form action="/project/search" method="post"
   input type="submit" value="Apply filters"
 
 h1 = @result
--@result.each do |project|
-		a.projectthumbnail href="/project/show/#{project["projectid"]}"
-			h2 = project["projectname"]
-			h3 = project["tagname"]
+-unless @result.nil?
+  -@result.each do |project|
+      a.projectthumbnail href="/project/show/#{project["projectid"]}"
+        h2 = project["projectname"]
+        h3 = project["tagname"]
