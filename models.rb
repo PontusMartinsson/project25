@@ -48,7 +48,9 @@ def projects_search(name, creator, tag)
     unless tag.empty? # filter på tag
       tagid = db.execute("SELECT id FROM tag WHERE tagname LIKE ?", tag).flatten
 
-      unless tagid.empty?
+      if tagid.empty?
+        return []
+      else
         sql = "
           SELECT *
           FROM ((project_tag_rel
