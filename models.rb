@@ -40,35 +40,43 @@ def projects_search(name, creator, tag)
   creator = keyword_nil(creator)
   tag = keyword_nil(tag)
 
-  sql = "
-  SELECT *
-  FROM ((project_tag_rel
-    INNER JOIN project ON project_tag_rel.projectid = project.id)
-    INNER JOIN tag ON project_tag_rel.tagid = tag.id)"
+  sql = ""
 
   vars = []
 
   unless name.empty? && creator.empty? && tag.empty?
-    sql << " WHERE"
-
     unless tag.empty? # filter på tag
-      sql << " ("
       tagid = db.execute("SELECT id FROM tag WHERE tagname LIKE ?", tag).flatten
 
-      tagid.each do |i|
-        sql_add(sql, "OR", "tagid = ?")
-        vars.append i
-      end
+      unless tagid.empty?
+        sql = "
+          SELECT *
+          FROM ((project_tag_rel
+            INNER JOIN project ON project_tag_rel.projectid = project.id)
+            INNER JOIN tag ON project_tag_rel.tagid = tag.id)
+          WHERE ("
 
-      sql << ")"
+        tagid.each do |i|
+          sql_add(sql, "OR", "tagid = ?")
+          vars.append i
+        end
+
+        sql << ")"
+      end
     end
 
     unless name.empty? # filter på projekttitel
+      if sql.empty?
+        sql = "SELECT * FROM project WHERE"
+      end
       sql_add(sql, "AND", "projectname LIKE ?")
       vars.append(name)
     end
 
     unless creator.empty? # filter på skapares namn
+      if sql.empty?
+        sql = "SELECT * FROM project WHERE"
+      end
       id = db.execute("SELECT id FROM user WHERE username LIKE ?", creator)
       sql_add(sql, "AND", "userid = ?")
       id.empty? ? vars.append(nil) : vars.append(id)
@@ -78,13 +86,25 @@ def projects_search(name, creator, tag)
 
   puts sql, vars
   db.results_as_hash = true
-  db.execute(sql, vars)
+  sql.empty? ? db.execute("SELECT * FROM project") : db.execute(sql, vars)
 end
 
 def project_id(id)
   db = connect_db
   # § kolla om det är ens egna och i så fall spelar public ingen roll
   db.execute("SELECT * FROM project WHERE id = ? AND public = 1", id).first
+end
+
+def create_project(params)
+  db = connect_db
+
+  public = params['public'].nil? ? 0 : 1
+
+  db.execute("INSERT INTO project 
+    (projectname, userid, public, part1, part2, part3) 
+    VALUES 
+    (?, ?, ?, ?, ?, ? )
+    ", [params['name'], 1, public, params['part1'].to_i, params['part2'].to_i, params['part3'].to_i]) # § fixa user id
 end
 
 def parts

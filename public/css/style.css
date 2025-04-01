@@ -7,6 +7,10 @@ body {
 	background-color: darkgray;
 }
 
+body > *:not(header) {
+	margin: 0.5rem;
+}
+
 a {
 	color: whitesmoke;
 	display: block;
@@ -43,4 +47,20 @@ header > a {
 #login-button {
 	padding: 0.5rem;
 	background-color: green;
+}
+
+form {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+}
+
+form > * {
+	height: fit-content;
+}
+
+.select-part {
+	display: flex;
+	flex-direction: column;
+	width: fit-content;
 }

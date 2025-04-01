@@ -1,6 +1,26 @@
-form action="/project" method="post"
-  - @parts.each_with_index do |part, i|
-    input type="checkbox" name="part#{i}" value="#{part["id"]}" gre
-  input type="submit" value="gör skiten eller"
+form#project-creation action="/project" method="post"
+  .select-part
+    label for="part1" Part 1
+    select name="part1"
+      -@parts.each do |part|
+        option value="#{part['id']}" #{part['name']}
   
+  .select-part
+    label for="part2" Part 2
+    select name="part2"
+      -@parts.each do |part|
+        option value="#{part['id']}" #{part['name']}
+
+  .select-part
+    label for="part3" Part 3
+    select name="part3"
+      -@parts.each do |part|
+        option value="#{part['id']}" #{part['name']}
+
+  input type="text" name="name" placeholder="Name"
+
+  label for="public" Public?
+  input type="checkbox" name="public"
+
+  input type="submit" value="gör skiten eller"
 

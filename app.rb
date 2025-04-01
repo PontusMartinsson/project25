@@ -32,21 +32,19 @@ get '/project/user/:userid' do
   slim :'project/index'
 end
 
+get '/project/new' do
+  @parts = parts
+  slim :'project/create'
+end
+
 get '/project/:projectid' do
   projectid = params[:projectid]
   @result = project_id(projectid)
   slim :'project/show'
 end
 
-get '/project/new' do
-  @parts = parts
-  slim :'project/create'
-end
-
 post '/project' do
-  parts = params.select { |item| item.start_with?('part') }.values
-  parts.map! { |item| item.to_i }
-  p parts
+  create_project(params)
   redirect '/project/new'
 end
 
