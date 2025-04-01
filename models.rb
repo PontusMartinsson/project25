@@ -40,21 +40,21 @@ def projects_search(name, creator, tag)
   creator = keyword_nil(creator)
   tag = keyword_nil(tag)
 
-  sql = "SELECT * FROM project"
+  sql = "
+  SELECT *
+  FROM ((project_tag_rel
+    INNER JOIN project ON project_tag_rel.projectid = project.id)
+    INNER JOIN tag ON project_tag_rel.tagid = tag.id)"
+
   vars = []
 
   unless name.empty? && creator.empty? && tag.empty?
     sql << " WHERE"
 
     unless tag.empty? # filter på tag
+      sql << " ("
       tagid = db.execute("SELECT id FROM tag WHERE tagname LIKE ?", tag).flatten
-      sql = "
-        SELECT *
-        FROM ((project_tag_rel
-          INNER JOIN project ON project_tag_rel.projectid = project.id)
-          INNER JOIN tag ON project_tag_rel.tagid = tag.id)
-        WHERE (
-        "
+
       tagid.each do |i|
         sql_add(sql, "OR", "tagid = ?")
         vars.append i
@@ -125,5 +125,5 @@ def create_part(name, type)
 end
 
 def verify_part_creation(name, type)
-  !(part_names.include?(name) && part_type(name).include?(type))
+  (part_names.include?(name) && part_type(name).include?(type))
 end

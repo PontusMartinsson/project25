@@ -77,6 +77,6 @@ post '/part' do
     redirect '/part/new'
   else
     create_part(name, type)
-    redirect '/'
+    redirect '/part'
   end
 end
