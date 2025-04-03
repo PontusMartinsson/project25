@@ -9,9 +9,10 @@ html lang="en"
 		header
 			a href="/project" Projects
 			a href="/part" Parts
-			#upper-right-corner
-				a#login-button href="/login"
-					h2 Logga in
+			-if session[:id].nil?
+				#upper-right-corner
+					a#login-button href="/login"
+						h2 Logga in
 				
 
 		==yield

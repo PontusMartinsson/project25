@@ -10,7 +10,48 @@ require_relative 'models'
 enable :sessions
 
 get '/' do
-  slim :tja
+  redirect '/project'
+end
+
+get '/register' do
+  slim :register
+end
+
+post '/register' do
+  username = params[:username]
+  password = params[:password]
+  confirmpassword = params[:confirmpassword]
+
+  if password == confirmpassword
+    passworddigest = BCrypt::Password.create(password)
+    db = SQLite3::Database.new('db/greja.db')
+    db.execute("INSERT INTO user (username, password) VALUES (?, ?)", [username, passworddigest])
+    redirect '/project'
+  else
+    "Lösenorden matchade inte"
+  end
+end
+
+get '/login' do 
+  slim :login
+end
+
+post '/login' do
+  username = params[:username]
+  password = params[:password]
+
+  db = SQLite3::Database.new('db/greja.db')
+  db.results_as_hash = true
+  result = db.execute("SELECT * FROM user WHERE username = ?", username).first
+  passworddigest = result["password"]
+  id = result["id"]
+
+  if BCrypt::Password.new(passworddigest) == password
+    session[:id] = id
+    redirect '/project'
+  else
+    "NEJ"
+  end
 end
 
 get '/project' do
@@ -43,7 +84,7 @@ get '/project/:projectid' do
   slim :'project/show'
 end
 
-post '/project' do # flytta skit till models
+post '/project' do
   name = params['name']
 
   if project_names.include?(name)
@@ -73,7 +114,7 @@ get '/part/new' do
   slim :'part/create'
 end
 
-post '/part' do # flytta skit till models
+post '/part' do
   name = params[:name]
   type = params[:type]
 
