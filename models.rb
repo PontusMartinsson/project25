@@ -232,9 +232,6 @@ def verify_ownership(projectid)
   db = connect_db_nohash
 
   userid = db.execute("SELECT userid FROM project WHERE id = ?", projectid).first.first
-  p userid
-  p session[:id] == userid
-  p admin?
   userid == session[:id] || admin?
 end
 
