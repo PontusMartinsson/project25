@@ -1,0 +1,47 @@
+h1 = @result.first['projectname']
+
+form#project-creation action="/project/#{@result.first['projectid']}/update" method="post"
+  .select-part
+    label for="part1" Part 1
+    select name="part1"
+      -@parts.each do |part|
+        -if part['name'] == @parts_in_use[0]
+          option value="#{part['id']}" selected="selected" #{part['name']}
+        -else
+          option value="#{part['id']}" #{part['name']}
+  
+  .select-part
+    label for="part2" Part 2
+    select name="part2"
+      -@parts.each do |part|
+        -if part['name'] == @parts_in_use[1]
+          option value="#{part['id']}" selected="selected" #{part['name']}
+        -else
+          option value="#{part['id']}" #{part['name']}
+
+  .select-part
+    label for="part3" Part 3
+    select name="part3"
+      -@parts.each do |part|
+        -if part['name'] == @parts_in_use[2]
+          option value="#{part['id']}" selected="selected" #{part['name']}
+        -else
+          option value="#{part['id']}" #{part['name']}
+
+  input type="text" name="name" placeholder="Name" value="#{@result.first['projectname']}"
+  input type="text" name="tags" placeholder="Tags, separate using space" value="#{@result.first['tags']}"
+  
+  .checkbox
+    label for="public" Public?
+    input type="checkbox" name="public" checked="true"
+
+  input type="submit" value="Update project"
+
+-unless flash[:message].nil?
+  p = flash[:message]
+
+form action="/project/#{@result.first['projectid']}/delete" method="post" 
+  input type="submit" value="Delete project"
+
+/ a.delete_button href="/project/#{@result.first['projectid']}/delete" Delete project
+

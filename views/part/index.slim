@@ -6,5 +6,6 @@ form action="/part/search" method="post"
   input type="submit" value="Apply filters"
   
 -@result.each do |part|
-  h2 = part["name"]
-  h3 = part["type"]
+  .partbox
+    h2 = part["name"]
+    h3 = part["type"]

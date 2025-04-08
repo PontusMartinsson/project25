@@ -8,6 +8,6 @@ form action="/project/search" method="post"
 
 -unless @result.nil?
   -@result.each do |project|
-      a.projectthumbnail href="/project/#{project["projectid"]}"
+      a.projectthumbnail href="/project/#{project["projectid"]}/edit"
         h2 = project["projectname"]
         h3 = project["tags"]

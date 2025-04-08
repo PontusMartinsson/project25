@@ -1,4 +1,10 @@
-h1 id: #{@result["id"]}
-h1 projectname: #{@result["projectname"]}
-h1 userid: #{@result["userid"] }
-h1 public: #{@result["public"] }
+#show-box
+  h1 = @result.first['projectname']
+
+  h2 Parts:
+  -@parts.each do |part|
+    h3 = part
+
+  h2 Tags:
+  -@result.each do |tag|
+    h3 = tag['tagname']

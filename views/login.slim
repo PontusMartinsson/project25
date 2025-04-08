@@ -1,8 +1,11 @@
 h2 Log in
 
 form action="/login" method="post" 
-	input type="text" name="username" placeholder="Enter username"
-	input type="password" name="password" placeholder="Enter password"
-	input type="submit" value="Log the fuck in"
+	input type="text" name="username" placeholder="Enter username" value="s"
+	input type="password" name="password" placeholder="Enter password" value="s"
+	input type="submit" value="Log in"
 
+- unless flash[:message].nil?
+    p = flash[:message]
+		
 a href="/register" Register

@@ -3,8 +3,12 @@
 	padding: 0;
 }
 
+*:not(form *){
+	color: whitesmoke;
+}
+
 body {
-	background-color: darkgray;
+	background-color: dimgray;
 }
 
 body > *:not(header) {
@@ -12,7 +16,6 @@ body > *:not(header) {
 }
 
 a {
-	color: whitesmoke;
 	display: block;
 	text-decoration: none;
 }
@@ -36,17 +39,20 @@ header {
 
 header > a {
 	margin: 0 0.5rem;
+	min-width: fit-content;
 }
 
 #upper-right-corner {
 	display: flex;
 	justify-content: right;
+	align-items: center;
 	width: 100%;
 }
 
-#login-button {
+#upper-right-corner > a {
 	padding: 0.5rem;
 	background-color: green;
+	margin-left: 1rem;
 }
 
 form {
@@ -72,4 +78,8 @@ form > * {
 
 .checkbox > * {
 	margin: 0 0.25rem;
+}
+
+#show-box > h1, #show-box > h2 {
+	margin-top: 1rem;
 }
